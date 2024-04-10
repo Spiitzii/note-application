@@ -25,16 +25,66 @@ export function addNote() {
     });
 }
 
+
 // Funktion zum Anzeigen einer Notiz
 export function showNotes() {
     return new Promise((resolve, reject) => {
         // Notizen aus der Datei lesen
-        const notes = fs.readFileSync(noteFile, 'utf8').split('\n').filter(note => note.trim() !== '')
-        // Notizen formatieren und als Zeichenkette zurückgeben
-        const stringnote = notes.map((note, index) =>{
-            return `${index + 1}: ${note}`;
+        fs.readFile(noteFile, 'utf8', (err, data) => {
+            if (err) {
+                reject(err); // Fehler behandeln
+            } else {
+                const notes = data.split('\n').filter(note => note.trim() !== ''); // Notizen an Zeilenumbrüchen trennen und leere Zeilen filtern
+                resolve(notes); // Erfolgreich mit dem Array von Notizen auflösen
+            }
         });
-        // Erfolgreich zurückgeben
-        resolve(stringnote.join('\n')); 
     });
 }
+
+
+
+
+// Funktion zum Löschen einer Notiz
+export function deleteNote() {
+    return new Promise((resolve, reject) => {
+        // Benutzer auffordern, den Inhalt der zu löschenden Notiz einzugeben
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'noteContent',
+                message: 'Gib den Inhalt ein für das Löschen der Notiz'
+            }
+        ]).then((answers) => {
+            const noteContent = answers.noteContent.trim();
+
+            // Debugging-Ausgabe: Zu löschende Notiz anzeigen
+            console.log('Zu löschende Notiz:', noteContent);
+
+            // Notizen aus der Datei lesen
+            showNotes().then((notes) => {
+                // Debugging-Ausgabe: Alle Notizen anzeigen
+                console.log('Alle Notizen:', notes);
+
+                // Neues Array erstellen, das alle Notizen außer der zu löschenden Notiz enthält
+                const updatedNotes = notes.filter(note => note.trim() !== noteContent);
+                
+                // Debugging-Ausgabe: Aktualisierte Notizen anzeigen
+                console.log('Aktualisierte Notizen:', updatedNotes);
+
+                // Überprüfen, ob sich die Notiz tatsächlich im Array befand und gelöscht wurde
+                if (updatedNotes.length < notes.length) {
+                    // Die aktualisierte Liste der Notizen zurück in die Datei schreiben
+                    fs.writeFileSync(noteFile, updatedNotes.join('\n'));
+                    resolve('Notiz gelöscht.');
+                } else {
+                    reject('Die angegebene Notiz wurde nicht gefunden.');
+                }
+            }).catch((error) => {
+                reject(error);
+            });
+        }).catch((error) => {
+            reject(error);
+        });
+    });
+}
+
