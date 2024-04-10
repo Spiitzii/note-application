@@ -88,3 +88,28 @@ export function deleteNote() {
     });
 }
 
+// Interface um auszuwählen was man machen möchte
+export async function UserMenu(userInput) {
+    try {
+        switch(userInput) {
+            case 'add':
+                // addNote-Funktion starten
+                await addNote();
+                break;
+            case 'show':
+                // showNotes-Funktion starten
+                const notes= await showNotes();
+                console.log('Notizen:', notes)
+                break;
+            case 'delete':
+                // WdeleteNote-Funktion starten
+                await deleteNote();
+                break;
+            default:
+                console.error('Ungültige Auswahl');
+                break;
+        }
+    } catch (error) {
+        console.error('Fehler:', error)
+    }
+}
