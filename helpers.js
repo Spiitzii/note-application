@@ -24,3 +24,17 @@ export function addNote() {
         });
     });
 }
+
+// Funktion zum Anzeigen einer Notiz
+export function showNotes() {
+    return new Promise((resolve, reject) => {
+        // Notizen aus der Datei lesen
+        const notes = fs.readFileSync(noteFile, 'utf8').split('\n').filter(note => note.trim() !== '')
+        // Notizen formatieren und als Zeichenkette zurückgeben
+        const stringnote = notes.map((note, index) =>{
+            return `${index + 1}: ${note}`;
+        });
+        // Erfolgreich zurückgeben
+        resolve(stringnote.join('\n')); 
+    });
+}
