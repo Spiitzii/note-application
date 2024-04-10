@@ -1,12 +1,16 @@
-import fs from 'fs'; // Importieren des fs-Moduls für Dateioperationen
-import inquirer from 'inquirer'
+// Importieren des fs-Moduls für Dateioperationen
+import fs from 'fs';
 
-const noteFile = 'notes.txt'; // Pfad zur Notizdatei
+// Importieren des inquirer-Moduls für Benutzereingaben
+import inquirer from 'inquirer';
+
+// Pfad zur Notizdatei
+const noteFile = 'notes.txt';
 
 // Funktion zum Hinzufügen einer Notiz
 export function addNote() {
     return new Promise((resolve, reject) => {
-        // Benutzer auffordern, eine Notiz einzugeben
+        // Benutzer zur Eingabe einer Notiz auffordern
         inquirer.prompt([
             {
                 type: 'input',
@@ -25,7 +29,6 @@ export function addNote() {
     });
 }
 
-
 // Funktion zum Anzeigen einer Notiz
 export function showNotes() {
     return new Promise((resolve, reject) => {
@@ -34,20 +37,19 @@ export function showNotes() {
             if (err) {
                 reject(err); // Fehler behandeln
             } else {
-                const notes = data.split('\n').filter(note => note.trim() !== ''); // Notizen an Zeilenumbrüchen trennen und leere Zeilen filtern
-                resolve(notes); // Erfolgreich mit dem Array von Notizen auflösen
+                // Notizen an Zeilenumbrüchen trennen und leere Zeilen filtern
+                const notes = data.split('\n').filter(note => note.trim() !== '');
+                // Erfolgreich mit dem Array von Notizen auflösen
+                resolve(notes);
             }
         });
     });
 }
 
-
-
-
 // Funktion zum Löschen einer Notiz
 export function deleteNote() {
     return new Promise((resolve, reject) => {
-        // Benutzer auffordern, den Inhalt der zu löschenden Notiz einzugeben
+        // Benutzer zur Eingabe des Inhalts für das Löschen der Notiz auffordern
         inquirer.prompt([
             {
                 type: 'input',
@@ -60,20 +62,20 @@ export function deleteNote() {
             // Debugging-Ausgabe: Zu löschende Notiz anzeigen
             console.log('Zu löschende Notiz:', noteContent);
 
-            // Notizen aus der Datei lesen
+            // Notizen aus der Datei lesen und verarbeiten
             showNotes().then((notes) => {
                 // Debugging-Ausgabe: Alle Notizen anzeigen
                 console.log('Alle Notizen:', notes);
 
-                // Neues Array erstellen, das alle Notizen außer der zu löschenden Notiz enthält
+                // Notizen filtern, um die zu löschende Notiz zu entfernen
                 const updatedNotes = notes.filter(note => note.trim() !== noteContent);
                 
                 // Debugging-Ausgabe: Aktualisierte Notizen anzeigen
                 console.log('Aktualisierte Notizen:', updatedNotes);
 
-                // Überprüfen, ob sich die Notiz tatsächlich im Array befand und gelöscht wurde
+                // Überprüfen, ob die Notiz gefunden und gelöscht wurde
                 if (updatedNotes.length < notes.length) {
-                    // Die aktualisierte Liste der Notizen zurück in die Datei schreiben
+                    // Aktualisierte Notizen zurück in die Datei schreiben
                     fs.writeFileSync(noteFile, updatedNotes.join('\n'));
                     resolve('Notiz gelöscht.');
                 } else {
@@ -88,21 +90,21 @@ export function deleteNote() {
     });
 }
 
-// Interface um auszuwählen was man machen möchte
+// Benutzerinteraktion für die Auswahl der Aktion
 export async function UserMenu(userInput) {
     try {
         switch(userInput) {
             case 'add':
-                // addNote-Funktion starten
+                // Hinzufügen einer Notiz
                 await addNote();
                 break;
             case 'show':
-                // showNotes-Funktion starten
-                const notes= await showNotes();
-                console.log('Notizen:', notes)
+                // Anzeigen aller Notizen
+                const notes = await showNotes();
+                console.log('Notizen:', notes);
                 break;
             case 'delete':
-                // WdeleteNote-Funktion starten
+                // Löschen einer Notiz
                 await deleteNote();
                 break;
             default:
@@ -110,6 +112,6 @@ export async function UserMenu(userInput) {
                 break;
         }
     } catch (error) {
-        console.error('Fehler:', error)
+        console.error('Fehler:', error); // Fehlermeldung ausgeben
     }
 }
