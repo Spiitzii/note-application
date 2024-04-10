@@ -1,5 +1,5 @@
 Befehl: addNote()
-Beschreibung: Diese Funktion fordert den Benutzer auf, eine Notiz einzugeben, und fügt die eingegebene Notiz zur Datei "notes.txt" hinzu.
+Beschreibung: Diese Funktion fordert den Benutzer auf, eine Notiz einzugeben,  und fügt die eingegebene Notiz zur Datei "notes.txt" hinzu.
 Verwendung: Führen Sie die Funktion addNote() aus, um eine neue Notiz hinzuzufügen.
 
 Befehl: showNotes()
